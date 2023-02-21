@@ -185,10 +185,19 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "auto-update",
+        appId: "com.electron.autoupdate",
         publish: {
           provider: "github",
           releaseType: "release",
+        },
+        linux: {
+          target: "AppImage",
+        },
+        win: {
+          target: "nsis",
+        },
+        mac: {
+          target: "dmg",
         },
       },
     },
