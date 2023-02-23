@@ -1,7 +1,10 @@
 <template>
-  <h1>Welcom</h1>
+  <q-btn icon="settings">
+    <q-badge v-if="updateAvailable" floating rounded color="red" />
+  </q-btn>
   <div>current version: {{ version }}</div>
   <div>message: {{ updateMsg }}</div>
+  <q-btn label="Download update" @click="downloadUpdate"></q-btn>
 </template>
 
 <script>
@@ -12,6 +15,7 @@ export default defineComponent({
 
   data() {
     return {
+      updateAvailable: false,
       version: "",
       updateMsg: "",
     };
@@ -20,11 +24,21 @@ export default defineComponent({
   mounted() {
     this.version = window.updater.versionInfo();
 
+    window.updater.updateAvailable((event, available) => {
+      this.updateAvailable = available;
+    });
+
     window.updater.updateMessage((event, msg) => {
       console.log("event", event);
       console.log("msg", msg);
       this.updateMsg = msg;
     });
+  },
+
+  methods: {
+    downloadUpdate() {
+      window.updater.downloadUpdate();
+    },
   },
 });
 </script>

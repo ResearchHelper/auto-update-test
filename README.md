@@ -1,41 +1,21 @@
-# Quasar App (auto-update)
+# Build and Publish
 
-A Quasar Project
+I am building on a Linux machine.
 
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
+## Linux target: AppImage
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+Just build it.
 
+## Windows target: nsis
 
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
+The window installer program. We need to specify main entrance file.
 
+## Mac target: dmg
 
-### Format the files
-```bash
-yarn format
-# or
-npm run format
-```
+`dmg` is better than `pkg` since we don't need to worry about the uninstaller.
 
+Use the docker image `sickcodes/Docker-OSX`, we can run macos on linux. Use that to build `dmg`.
 
+# Auto Update
 
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+See the files `electron-main.js`, `electron-preload.js` and `App.vue`.

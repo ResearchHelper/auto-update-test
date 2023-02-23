@@ -39,4 +39,12 @@ contextBridge.exposeInMainWorld("updater", {
   updateMessage(callback) {
     ipcRenderer.on("updateMessage", callback);
   },
+
+  updateAvailable(callback) {
+    ipcRenderer.on("updateAvailable", callback);
+  },
+
+  downloadUpdate() {
+    ipcRenderer.send("downloadUpdate");
+  },
 });
