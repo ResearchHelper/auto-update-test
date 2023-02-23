@@ -1,10 +1,17 @@
 import { app, BrowserWindow, nativeTheme } from "electron";
+import { initialize, enable } from "@electron/remote/main";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 import os from "os";
 
+initialize();
+
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
+autoUpdater.logger = require("electron-log");
+autoUpdater.logger.transports.file.level = "verbose";
+autoUpdater.logger.transports.file.resolvePathFn = () =>
+  path.join("/home/huntfeng/Desktop", "app.log");
 
 try {
   if (platform === "win32" && nativeTheme.shouldUseDarkColors === true) {
@@ -27,11 +34,13 @@ function createWindow() {
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
+      sandbox: false,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
   });
 
+  enable(mainWindow.webContents);
   mainWindow.loadURL(process.env.APP_URL);
 
   if (process.env.DEBUGGING) {
@@ -51,29 +60,20 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
-  setTimeout(() => {
-    mainWindow.webContents.send(
-      "updateMessage",
-      "just started, ready to check updates"
-    );
 
-    autoUpdater.checkForUpdatesAndNotify();
-    console.log("5seconds later, check updates");
-    autoUpdater.on("update-available", (info) => {
-      console.log("update available");
-      mainWindow.webContents.send("updateMessage", "update available");
-    });
-
-    autoUpdater.on("update-not-available", (info) => {
-      console.log("update not available");
-      mainWindow.webContents.send("updateMessage", "update not available");
-    });
-
-    autoUpdater.on("checking-for-update", (info) => {
-      console.log("checking for update");
-      mainWindow.webContents.send("updateMessage", "checking for updates");
-    });
-  }, 5000);
+  autoUpdater.checkForUpdates();
+  autoUpdater.on("update-available", (info) => {
+    mainWindow.webContents.send("updateMessage", info);
+  });
+  autoUpdater.on("update-not-available", (info) => {
+    mainWindow.webContents.send("updateMessage", info);
+  });
+  autoUpdater.on("checking-for-update", () => {
+    mainWindow.webContents.send("updateMessage", "checking for updates");
+  });
+  autoUpdater.on("error", (error, info) => {
+    mainWindow.webContents.send("updateMessage", info);
+  });
 });
 
 app.on("window-all-closed", () => {

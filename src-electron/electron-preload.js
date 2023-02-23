@@ -29,8 +29,13 @@
  */
 
 import { contextBridge, ipcRenderer } from "electron";
+import { app } from "@electron/remote";
 
 contextBridge.exposeInMainWorld("updater", {
+  versionInfo() {
+    return app.getVersion();
+  },
+
   updateMessage(callback) {
     ipcRenderer.on("updateMessage", callback);
   },

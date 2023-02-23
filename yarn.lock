@@ -35,6 +35,11 @@
   optionalDependencies:
     global-agent "^3.0.0"
 
+"@electron/remote@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.9.tgz#092ff085407bc907f45b89a72c36faa773ccf2d9"
+  integrity sha512-LR0W0ID6WAKHaSs0x5LX9aiG+5pFBNAJL6eQAJfGkCuZPUa6nZz+czZLdlTDETG45CgF/0raSvCtYOYUpr6c+A==
+
 "@electron/universal@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@electron/universal/-/universal-1.2.1.tgz#3c2c4ff37063a4e9ab1e6ff57db0bc619bc82339"
@@ -1361,6 +1366,11 @@ electron-builder@^23.6.0:
     read-config-file "6.2.0"
     simple-update-notifier "^1.0.7"
     yargs "^17.5.1"
+
+electron-log@^5.0.0-beta.19:
+  version "5.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-5.0.0-beta.19.tgz#15e5cbba1a775c86d4aae75f571f6e3975278d93"
+  integrity sha512-BN/0fDaSw3jpa3BXFQ2kASGmY1Vl4TShdBdozx75GB5MuTlDLMOZ15lfA9Aq592TXS88hC+jUeWqkmTgAH7irQ==
 
 electron-osx-sign@^0.6.0:
   version "0.6.0"
