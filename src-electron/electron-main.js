@@ -83,7 +83,7 @@ app.whenReady().then(() => {
   autoUpdater.on("download-progress", (info) => {
     mainWindow.webContents.send(
       "updateMessage",
-      `Downloading: ${Math.round(info.percent * 100)}%`
+      `Downloading: ${Math.round(info.percent)}%`
     );
   });
   autoUpdater.on("update-downloaded", (event) => {

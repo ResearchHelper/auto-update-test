@@ -1,4 +1,4 @@
-export GH_TOKEN=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
+export GH_TOKEN=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
 quasar build -m electron -P always -T linux
 # quasar build -m electron -P always -T win32
 # quasar build -m electron -P always -T darwin 
