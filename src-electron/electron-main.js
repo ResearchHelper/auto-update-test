@@ -1,61 +1,89 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
-import path from 'path'
-import os from 'os'
+import { app, BrowserWindow, nativeTheme } from "electron";
+import { autoUpdater } from "electron-updater";
+import path from "path";
+import os from "os";
 
 // needed in case process is undefined under Linux
-const platform = process.platform || os.platform()
+const platform = process.platform || os.platform();
 
 try {
-  if (platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
-    require('fs').unlinkSync(path.join(app.getPath('userData'), 'DevTools Extensions'))
+  if (platform === "win32" && nativeTheme.shouldUseDarkColors === true) {
+    require("fs").unlinkSync(
+      path.join(app.getPath("userData"), "DevTools Extensions")
+    );
   }
-} catch (_) { }
+} catch (_) {}
 
-let mainWindow
+let mainWindow;
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    icon: path.resolve(__dirname, "icons/icon.png"), // tray icon
     width: 1000,
     height: 600,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
-    }
-  })
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+    },
+  });
 
-  mainWindow.loadURL(process.env.APP_URL)
+  mainWindow.loadURL(process.env.APP_URL);
 
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow.webContents.closeDevTools()
-    })
+    mainWindow.webContents.on("devtools-opened", () => {
+      mainWindow.webContents.closeDevTools();
+    });
   }
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow();
+  setTimeout(() => {
+    mainWindow.webContents.send(
+      "updateMessage",
+      "just started, ready to check updates"
+    );
 
-app.on('window-all-closed', () => {
-  if (platform !== 'darwin') {
-    app.quit()
+    autoUpdater.checkForUpdatesAndNotify();
+    console.log("5seconds later, check updates");
+    autoUpdater.on("update-available", (info) => {
+      console.log("update available");
+      mainWindow.webContents.send("updateMessage", "update available");
+    });
+
+    autoUpdater.on("update-not-available", (info) => {
+      console.log("update not available");
+      mainWindow.webContents.send("updateMessage", "update not available");
+    });
+
+    autoUpdater.on("checking-for-update", (info) => {
+      console.log("checking for update");
+      mainWindow.webContents.send("updateMessage", "checking for updates");
+    });
+  }, 5000);
+});
+
+app.on("window-all-closed", () => {
+  if (platform !== "darwin") {
+    app.quit();
   }
-})
+});
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (mainWindow === null) {
-    createWindow()
+    createWindow();
   }
-})
+});

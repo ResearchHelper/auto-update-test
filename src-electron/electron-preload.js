@@ -27,3 +27,11 @@
  *   }
  * }
  */
+
+import { contextBridge, ipcRenderer } from "electron";
+
+contextBridge.exposeInMainWorld("updater", {
+  updateMessage(callback) {
+    ipcRenderer.on("updateMessage", callback);
+  },
+});
