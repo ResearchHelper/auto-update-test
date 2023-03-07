@@ -44,6 +44,10 @@ contextBridge.exposeInMainWorld("updater", {
     ipcRenderer.on("updateAvailable", callback);
   },
 
+  checkForUpdates() {
+    ipcRenderer.send("checkForUpdates");
+  },
+
   downloadUpdate() {
     ipcRenderer.send("downloadUpdate");
   },

@@ -1,4 +1,5 @@
 <template>
+  <q-btn label="Check for updates" @click="checkForUpdates"></q-btn>
   <q-btn icon="settings">
     <q-badge v-if="updateAvailable" floating rounded color="red" />
   </q-btn>
@@ -36,6 +37,10 @@ export default defineComponent({
   },
 
   methods: {
+    checkForUpdates() {
+      window.updater.checkForUpdates();
+    },
+
     downloadUpdate() {
       window.updater.downloadUpdate();
     },

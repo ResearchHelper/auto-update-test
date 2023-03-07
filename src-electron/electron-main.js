@@ -6,14 +6,6 @@ import os from "os";
 
 initialize();
 
-autoUpdater.logger = require("electron-log");
-autoUpdater.logger.transports.file.level = "verbose";
-autoUpdater.logger.transports.file.resolvePathFn = () =>
-  path.join("/home/huntfeng/Desktop", "app.log");
-
-autoUpdater.autoDownload = false;
-autoUpdater.autoInstallOnAppQuit = true;
-
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 try {
@@ -61,44 +53,7 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  createWindow();
-
-  autoUpdater.checkForUpdates();
-  autoUpdater.on("checking-for-update", () => {
-    mainWindow.webContents.send("updateMessage", "checking for updates");
-  });
-  autoUpdater.on("update-available", (info) => {
-    mainWindow.webContents.send("updateAvailable", true);
-
-    mainWindow.webContents.send(
-      "updateMessage",
-      `Newer version ${info.version} is available`
-    );
-  });
-  autoUpdater.on("update-not-available", (info) => {
-    mainWindow.webContents.send("updateAvailable", false);
-    mainWindow.webContents.send("updateMessage", "App is up-to-date");
-  });
-  autoUpdater.on("download-progress", (info) => {
-    mainWindow.webContents.send(
-      "updateMessage",
-      `Downloading: ${Math.round(info.percent)}%`
-    );
-  });
-  autoUpdater.on("update-downloaded", (event) => {
-    mainWindow.webContents.send(
-      "updateMessage",
-      "Download complete, restart app to install."
-    );
-  });
-  autoUpdater.on("error", (error, info) => {
-    mainWindow.webContents.send("updateMessage", info);
-  });
-  ipcMain.on("downloadUpdate", (event) => {
-    autoUpdater.downloadUpdate();
-  });
-});
+app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
   if (platform !== "darwin") {
@@ -110,4 +65,52 @@ app.on("activate", () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+// auto updater
+autoUpdater.logger = require("electron-log");
+autoUpdater.logger.transports.file.level = "verbose";
+autoUpdater.logger.transports.file.resolvePathFn = () =>
+  path.join("/home/huntfeng/Desktop", "app.log");
+
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
+
+autoUpdater.on("checking-for-update", () => {
+  mainWindow.webContents.send("updateMessage", "checking for updates");
+});
+autoUpdater.on("update-available", (info) => {
+  mainWindow.webContents.send("updateAvailable", true);
+
+  mainWindow.webContents.send(
+    "updateMessage",
+    `Newer version ${info.version} is available`
+  );
+});
+autoUpdater.on("update-not-available", (info) => {
+  mainWindow.webContents.send("updateAvailable", false);
+  mainWindow.webContents.send("updateMessage", "App is up-to-date");
+});
+autoUpdater.on("download-progress", (info) => {
+  mainWindow.webContents.send(
+    "updateMessage",
+    `Downloading: ${Math.round(info.percent)}%`
+  );
+});
+autoUpdater.on("update-downloaded", (event) => {
+  mainWindow.webContents.send(
+    "updateMessage",
+    "Download complete, restart app to install."
+  );
+});
+autoUpdater.on("error", (error, info) => {
+  mainWindow.webContents.send("updateMessage", info);
+});
+
+ipcMain.on("checkForUpdates", () => {
+  autoUpdater.checkForUpdates();
+});
+
+ipcMain.on("downloadUpdate", (event) => {
+  autoUpdater.downloadUpdate();
 });
