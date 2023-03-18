@@ -2,6 +2,9 @@ name: Build/release
 
 on:
   push:
+    branches-ignore:
+      - "*"
+      - "!main"
     tags:
       - v*
 
@@ -16,10 +19,6 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
-
-      - name: Exit if not on main branch
-        if: endsWith(github.ref, 'main') == false
-        run: exit -1
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
