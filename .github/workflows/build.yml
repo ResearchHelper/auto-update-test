@@ -17,17 +17,12 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Setup Node.js & yarn install if no cache exists
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
 
       - name: Build/release Electron app
-        uses: ResearchHelper/action-electron-builder@master
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # release the app after building
-          release: true
+        run: yarn run quasar build --mode electron --publish always
