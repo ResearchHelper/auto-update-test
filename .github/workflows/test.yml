@@ -1,0 +1,14 @@
+name: Test
+
+on:
+  push:
+    ignore_branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
