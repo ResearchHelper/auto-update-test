@@ -1,9 +1,6 @@
-name: Test
+name: Test on main
 
-on:
-  push:
-    ignore_branches:
-      - main
+on: pull_request
 
 jobs:
   test:
