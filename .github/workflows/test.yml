@@ -2,7 +2,7 @@ name: Test
 
 on:
   push:
-    ignore_branches:
+    branches_ignore:
       - main
 
 jobs:
